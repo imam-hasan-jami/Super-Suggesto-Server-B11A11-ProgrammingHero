@@ -23,6 +23,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const usersCollection = client.db("suggesto").collection("users");
+    const queryCollection = client.db("suggesto").collection("queries");
 
     // user related apis
     app.get("/users", async (req, res) => {
@@ -43,6 +44,18 @@ async function run() {
       const result = await usersCollection.insertOne(userProfile);
       res.send(result);
     });
+
+    // query related apis
+    app.get("/queries", async (req, res) => {
+      const result = await queryCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/queries", async (req, res) => {
+      const newQuery = req.body;
+      const result = await queryCollection.insertOne(newQuery);
+      res.send(result);
+    })
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
