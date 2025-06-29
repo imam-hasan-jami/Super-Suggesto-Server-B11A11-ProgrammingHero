@@ -51,6 +51,14 @@ async function run() {
       res.send(result);
     });
 
+    // get query details
+    app.get("/queries/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await queryCollection.findOne(query);
+      res.send(result);
+    });
+
     app.get("/queries/user/:email", async (req, res) => {
         const email = req.params.userEmail;
         const query = { useremail: email };
