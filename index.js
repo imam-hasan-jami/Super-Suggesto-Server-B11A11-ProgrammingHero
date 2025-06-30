@@ -51,7 +51,6 @@ async function run() {
       res.send(result);
     });
 
-    // get query details
     app.get("/queries/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -71,6 +70,23 @@ async function run() {
       const result = await queryCollection.insertOne(newQuery);
       res.send(result);
     })
+
+    app.put("/queries/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedQuery = req.body;
+      const updatedDoc = {
+        $set: updatedQuery,
+      };
+
+      const result = await queryCollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
