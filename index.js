@@ -24,6 +24,7 @@ async function run() {
   try {
     const usersCollection = client.db("suggesto").collection("users");
     const queryCollection = client.db("suggesto").collection("queries");
+    const recommendationCollection = client.db("suggesto").collection("recommendations");
 
     // user related apis
     app.get("/users", async (req, res) => {
@@ -93,6 +94,20 @@ async function run() {
       const query = { _id: new ObjectId(id) };
       const result = await queryCollection.deleteOne(query);
       res.send(result);
+    });
+
+    // recommendation related apis
+    app.post("/recommendations", async (req, res) => {
+      const newRecommendation = req.body;
+      const [recommendationResult, queryUpdateResult] = await Promise.all([
+        recommendationCollection.insertOne(newRecommendation),
+        queryCollection.updateOne(
+          { _id: new ObjectId(newRecommendation.queryId) },
+          { $inc: { recommendationCount: 1 } }
+        ),
+      ]);
+
+      res.send(recommendationResult);
     });
 
     await client.db("admin").command({ ping: 1 });
