@@ -97,6 +97,18 @@ async function run() {
     });
 
     // recommendation related apis
+    app.get("/recommendations", async (req, res) => {
+      const result = await recommendationCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/recommendations/query/:queryId", async (req, res) => {
+      const queryId = req.params.queryId;
+      const query = { queryId: queryId };
+      const result = await recommendationCollection.find(query).toArray();
+      res.send(result);
+    });
+
     app.post("/recommendations", async (req, res) => {
       const newRecommendation = req.body;
       const [recommendationResult, queryUpdateResult] = await Promise.all([
