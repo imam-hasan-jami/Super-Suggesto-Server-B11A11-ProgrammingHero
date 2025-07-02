@@ -109,6 +109,13 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/recommendations/recommender/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { recommenderEmail: email };
+      const result = await recommendationCollection.find(query).toArray();
+      res.send(result);
+    });
+
     app.post("/recommendations", async (req, res) => {
       const newRecommendation = req.body;
       const [recommendationResult, queryUpdateResult] = await Promise.all([
@@ -120,6 +127,18 @@ async function run() {
       ]);
 
       res.send(recommendationResult);
+    });
+
+    app.delete("/recommendations/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const recommendation = await recommendationCollection.findOne(query);
+      const result = await recommendationCollection.deleteOne(query);
+      await queryCollection.updateOne(
+        { _id: new ObjectId(recommendation.queryId) },
+        { $inc: { recommendationCount: -1 } }
+      );
+      res.send(result);
     });
 
     await client.db("admin").command({ ping: 1 });
