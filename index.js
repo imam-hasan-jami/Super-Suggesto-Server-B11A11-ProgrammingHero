@@ -116,6 +116,24 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/recommendations/user/:email", async (req, res) => {
+      const userEmail = req.params.email;
+
+      const userQueries = await queryCollection
+        .find({ userEmail: userEmail })
+        .toArray();
+
+      const queryIds = userQueries.map((query) => query._id.toString());
+
+      const recommendations = await recommendationCollection
+        .find({
+          queryId: { $in: queryIds },
+        })
+        .toArray();
+
+      res.send(recommendations);
+    });
+
     app.post("/recommendations", async (req, res) => {
       const newRecommendation = req.body;
       const [recommendationResult, queryUpdateResult] = await Promise.all([
