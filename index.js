@@ -60,8 +60,8 @@ async function run() {
     });
 
     app.get("/queries/user/:email", async (req, res) => {
-        const email = req.params.userEmail;
-        const query = { useremail: email };
+        const email = req.params.email;
+        const query = { userEmail: email };
         const result = await queryCollection.find(query).toArray();
         res.send(result);
     });
