@@ -3,6 +3,7 @@
 A Node.js Express server application that provides a recommendation system backend, allowing users to create queries and receive recommendations from other users.
 
 ## Live URL
+https://suggesto-server.vercel.app/
 
 
 ## Purpose
